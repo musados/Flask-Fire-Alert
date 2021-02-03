@@ -1,0 +1,16 @@
+{% extends "base.html" %} {% block title %} Welcom Fire Alert {% endblock %} {% block head %}
+<!-- Static references -->
+<link rel="stylesheet" type="text/css" href="{{url_for('static', filename='styles/style.css')}}"> {% endblock %} {% block content %}
+
+<div class="text-center">
+    <h1>Welcome to Fire Alert system</h1>
+    <hr>
+    <p>Fire alert system allows you to create an event reports and to see them on the mapbox's map.</p>
+    <button id="go_to_map" class="btn btn-primary btn-lg" onclick="location.href = '/map';">Go to the map</button>
+</div>
+
+<script>
+    document.getElementById('nav_home').className = 'nav-item active';
+    document.getElementById('nav_map').className = 'nav-item';
+</script>
+{% endblock %}

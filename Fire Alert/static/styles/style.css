@@ -1,0 +1,24 @@
+.container {
+    position: relative !important;
+    max-height: 70% !important;
+    height: 100% !important;
+    max-width: 99% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 5px !important;
+}
+
+body {
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+.text-center {
+    margin: 15px !important;
+}
+
+#go_to_map {
+    position: relative;
+    margin-top: 30px;
+    top: 50px;
+}

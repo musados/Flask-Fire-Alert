@@ -1,0 +1,302 @@
+.container {
+    position: relative !important;
+    max-height: 70% !important;
+    height: 100% !important;
+    max-width: 99% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 5px !important;
+}
+
+body {
+    margin: 0px !important;
+    padding: 0px !important;
+}
+
+#go_to_map {
+    position: relative;
+    margin-top: 100px;
+    top: 50px;
+}
+
+
+/*#map {
+	position: relative !important;
+	top: 5px !important;
+	height: 700px !important;
+	width: 95% !important;
+	margin-left: auto;
+	margin-right: auto;
+}*/
+
+.sidebar {
+    width: 33.3333%;
+}
+
+body {
+    color: #404040;
+    font: 400 15px/22px 'Helvetica Neue', Sans-serif;
+    margin: 0;
+    padding: 0;
+    -webkit-font-smoothing: antialiased;
+}
+
+* {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+h1 {
+    font-size: 22px;
+    margin: 0;
+    font-weight: 400;
+}
+
+a {
+    color: #404040;
+    text-decoration: none;
+}
+
+.btn-sm {
+    margin: 5px;
+}
+
+a:hover {
+    color: #101010;
+}
+
+
+/*############  map area  ###############*/
+
+.sidebar {
+    position: absolute;
+    width: 33.3333%;
+    height: 720px;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    border-right: 1px solid rgba(0, 0, 0, 0.25);
+}
+
+.pad2 {
+    padding: 20px;
+}
+
+.quiet {
+    color: #555;
+}
+
+.map {
+    position: absolute;
+    left: 33.3333%;
+    width: 66.6666%;
+    height: 720px;
+    top: 0;
+    bottom: 0;
+}
+
+.heading {
+    background: #fff;
+    border-bottom: 1px solid #eee;
+    height: 60px;
+    line-height: 60px;
+    padding: 0 10px;
+}
+
+.listings {
+    height: 90%;
+    overflow: auto;
+    padding-bottom: 60px;
+}
+
+.listings .fire_item,
+.flood_item,
+.plague_item,
+.unknown_item,
+.item {
+    display: block;
+    border-bottom: 1px solid #eee;
+    padding: 10px;
+    text-decoration: none;
+}
+
+.listings .fire_item:last-child,
+.flood_item:last-child,
+.plague_item:last-child,
+.unknown_item:last-child,
+.item:last-child {
+    border-bottom: none;
+}
+
+.listings .item .title {
+    display: block;
+    color: #00853e;
+    font-weight: 700;
+}
+
+.listings .fire_item .quiet {
+    display: block;
+    color: #7e0000;
+    font-weight: 700;
+}
+
+.listings .flood_item .quiet {
+    display: block;
+    color: #00007e;
+    font-weight: 700;
+}
+
+.listings .plague_item .quiet {
+    display: block;
+    color: #007e00;
+    font-weight: 700;
+}
+
+.listings .unknown_item .quiet {
+    display: block;
+    color: #000;
+    font-weight: 700;
+}
+
+.listings .item .title small {
+    font-weight: 400;
+}
+
+.listings .item.active .title,
+.listings .item .title:hover {
+    color: #8cc63f;
+}
+
+.listings .item.active {
+    background-color: #f8f8f8;
+}
+
+::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+    border-left: 0;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-track {
+    background: none;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #00853e;
+    border-radius: 0;
+}
+
+.clearfix {
+    display: block;
+}
+
+.clearfix::after {
+    content: '.';
+    display: block;
+    height: 0;
+    clear: both;
+    visibility: hidden;
+}
+
+
+/* Marker tweaks */
+
+.leaflet-popup-close-button {
+    display: none;
+}
+
+.leaflet-popup-content {
+    font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+    padding: 0;
+    width: 200px;
+}
+
+.leaflet-popup-content-wrapper {
+    padding: 0;
+}
+
+.leaflet-popup-content h3 {
+    color: #fff;
+    margin: 0;
+    display: block;
+    padding: 10px;
+    border-radius: 3px 3px 0 0;
+    font-weight: 700;
+    margin-top: -15px;
+}
+
+.leaflet-popup-content .Fire {
+    background: #ff0000;
+}
+
+.leaflet-popup-content .Flood {
+    background: #0000ff;
+}
+
+.leaflet-popup-content .Plague {
+    background: #91c949;
+}
+
+.leaflet-popup-content .Unknown {
+    background: #000;
+}
+
+.leaflet-popup-content div {
+    padding: 10px;
+}
+
+.leaflet-container .leaflet-marker-icon {
+    cursor: pointer;
+}
+
+
+/*############  end map area  ###############*/
+
+textarea {
+    resize: none !important;
+    overflow: hidden !important;
+}
+
+.txta {
+    width: 100%;
+    max-width: 500px;
+    min-height: 100px;
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    overflow: hidden;
+    line-height: 1.4;
+}
+
+#staticBackdropLabel {
+    color: #fff;
+    text-shadow: 1px 1px 5px #000000 !important;
+}
+
+.modal-header {
+    background-color: grey;
+}
+
+.fas {
+    margin: 3px;
+}
+
+#add_event_button {
+    position: fixed;
+    right: 30px;
+    bottom: 20%;
+    z-index: 10;
+}
+
+#marker {
+    background-color: "blue";
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    cursor: pointer;
+}
+
+.mapboxgl-popup {
+    max-width: 200px;
+}
