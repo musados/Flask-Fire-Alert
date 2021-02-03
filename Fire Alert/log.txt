@@ -1,0 +1,3 @@
+02/03/2021, 18:48:21: client ip: 127.0.0.1, event: Get all: result retrived successfuly
+02/03/2021, 18:48:24: client ip: 127.0.0.1, event: PUT:  1  Event(title=תחנת אורות רבין, description=הדבקה המונית בנגיף הקורונה בקרב עובדי אגף בינוי עמודי חשמל, type=1) successfuly updated!
+02/03/2021, 18:48:24: client ip: 127.0.0.1, event: Get all: result retrived successfuly

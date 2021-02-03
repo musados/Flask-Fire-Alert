@@ -1,11 +1,14 @@
-from flask import Flask, render_template, url_for
+from flask import Flask, render_template, url_for, request
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import func
 from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
 from enum import Enum
 import sys
+import os
+from datetime import datetime
 from map.main import main
 from flask_jsglue import JSGlue
+from flask import  jsonify
 
 
 app = Flask(__name__)
@@ -59,7 +62,7 @@ class EventModel(db.Model):
 	lat =  db.Column(db.Float, nullable=False)
 
 	def __repr__(self):
-		return f"Event(title={title}, description={description}, type={type})"
+		return f"Event(title={self.title}, description={self.description}, type={self.type})"
 
 
 # Single event object requst handler - RestAPI
@@ -70,7 +73,9 @@ class EventResource(Resource):
 		result = EventModel.query.filter_by(event_id).first()
 		print(str(event_id), file=sys.stdout)
 		if not result:
+			logServerEvent(f"GET Single: {event_id} not exist and aborted.")
 			abort(404, "The event not found")
+		logServerEvent(f"GET Single: {event_id} was found.")
 		return result
 
 	""" Create an event record by REST Api"""
@@ -79,14 +84,18 @@ class EventResource(Resource):
 		args = event_post_args.parse_args()
 		result = EventModel.query.filter_by(title = args['title']).first()
 		if result:
+			logServerEvent(f"POST: {event_id} creation aborted!")
 			print(str(result.title), file=sys.stdout)
 			abort(409, message="The event is already exist!!")
 		max_id = db.session.query(func.max(EventModel.id)).scalar()
 		if not max_id:
 			max_id = 0
+			logServerEvent(f"POST: The first record of the events is under processing...")
 		event = EventModel(id=max_id + 1, title=args['title'], description=args['description'], type=args['type'], lon = args['lon'], lat = args['lat'])
 		db.session.add(event)
 		db.session.commit()
+
+		logServerEvent(f"POST: new Event record created with id: {max_id} {event.__repr__()}!")
 
 		return event, 201
 
@@ -97,6 +106,7 @@ class EventResource(Resource):
 		args = event_update_args.parse_args()
 		result = EventModel.query.filter_by(id=event_id).first()
 		if not result:
+			logServerEvent(f"PUT:  updateing {event_id} aborted!")
 			abort(404, message="The event is not exist")
 
 		if args['title']:
@@ -112,16 +122,20 @@ class EventResource(Resource):
 
 		db.session.commit()
 
+		logServerEvent(f"PUT:  {event_id}  {result.__repr__()} successfuly updated!")
 		return result
 
-	@marshal_with(resource_fields)
+	#@marshal_with(resource_fields)
 	def delete(self, event_id):
 		result = EventModel.query.filter_by(id=event_id).first()
 		if not result:
+			logServerEvent(f"Delete:  failed to deleted {event_id}!")
 			abort(404, message="The event is not exist")
+		del_id = result.id
 		db.session.delete(result)
 		db.session.commit()
-		return result
+		logServerEvent(f"Delete: {del_id} has deleted!")
+		return del_id
 
 
 # Multi event object requst handler - RestAPI
@@ -129,10 +143,17 @@ class EventsResource(Resource):
 	""" get an events list by REST Api"""
 	@marshal_with(resource_fields)
 	def get(self):
-		result = EventModel.query.all()
-		if not result:
-			abort(404, message = "No events has found")
-		return result
+		try:
+			result = EventModel.query.all()
+			if not result:
+				logServerEvent("Get all: result is empty!")
+				abort(404, message = "No events has found")
+
+			logServerEvent("Get all: result retrived successfuly")
+			return result
+		except:
+			 logServerEvent("Get all: Failed to retrive any event!")
+			 abort(404, message = "No events has found")
 
 
 # Event object type
@@ -145,7 +166,13 @@ class Event(object):
 		self.description = descript
 		self.type = type
 
-		
+
+def logServerEvent(eventText):
+	t = datetime.now().strftime('%m/%d/%Y, %H:%M:%S')
+	ip = request.remote_addr;
+	res = f"{t}: client ip: {ip}, event: {eventText}\n"
+	with open("log.txt", "a") as fo:
+   		fo.write(res)
 
 # RestApi endpoints
 api.add_resource(EventResource, "/event/<int:event_id>")
@@ -154,16 +181,11 @@ api.add_resource(EventsResource, "/events/")
 
 @app.route("/")
 def home():
+	logServerEvent("Home page")
 	return render_template("home.html")
 
-"""
-@app.route("/map/")
-@app.route("/map/event/<event_id>")
-@app.route("/map/events")
-def map_home():
-	return render_template("map.html")
-"""
 
+# running the app in debug mode - i made it for the developement process
 if __name__ == "__main__":
 	db.create_all()
-	app.run(debug=True)
+	app.run(host='0.0.0.0', debug=True)

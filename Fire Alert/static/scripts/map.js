@@ -193,12 +193,21 @@ class EventList {
             this.array.splice(ev_index, 1);
     }
 
+    clear() {
+        this.array.splice(0, this.array.length);
+    }
+
     addEvent(ev) {
         console.log(ev);
         if (ev) {
             this.deleteEvent(ev.getId());
             this.array.push(ev);
         }
+    }
+
+    length() {
+        console.log("eventsList length: " + String(this.array.length));
+        return this.array.length;
     }
 
     getIdExist(id) {
@@ -253,6 +262,8 @@ function setMapMarkers(_geojson) {
 
     if (locations)
         locations.remove();
+    if (eventsList.length() <= 0)
+        listings.innerHTML = '';
 
     var arr = [];
     for (i = 0; i < listings.children.length; i++) {
@@ -478,6 +489,11 @@ function showModal() {
     })
 }
 
+/**
+ * 
+ * @param {New or update} op 
+ * @param {Event id to pass it manually - no via the form data} event_id 
+ */
 function sendEventForm(op, event_id = -1) {
     if (checkFields() == true) {
         var newEvent = new EventClass(event_id, title_input.value, des_input.value, select_input.value, getLongtitude(lonlat_input.value), getLatitude(lonlat_input.value));
@@ -495,6 +511,9 @@ function sendEventForm(op, event_id = -1) {
     }
 }
 
+/**
+ * Checking the form requirements
+ */
 function checkFields() {
     var flag = true;
     if (select_input.value != "1" && select_input.value != "2" && select_input.value != "3") {
@@ -508,12 +527,20 @@ function checkFields() {
     return flag;
 }
 
+/**
+ * Send new event form data
+ * @param {Event to create} event 
+ */
 function sendNewForm(event) {
     var _form = document.getElementById("new_event_form");
     createEvent(event, "#myModal");
     return false;
 }
 
+/**
+ * Send an exists event data for updating
+ * @param {Event to update} event 
+ */
 function sendUpdateForm(event) {
     var _form = document.getElementById("new_event_form");
     updateEvent(event, "#myModal");
@@ -525,9 +552,22 @@ function sendUpdateForm(event) {
  * REST API area - fetch api
  */
 
-
+/**
+ * The local events collection - eventsList
+ */
 var eventsList = new EventList();
 
+function hideModal(modal) {
+    if (modal != null) {
+        $(modal).modal('hide');
+    }
+}
+
+/**
+ * Create new event fetch api request
+ * @param {event to create} event 
+ * @param {the form container} modal 
+ */
 function createEvent(event, modal) {
     const formData = new FormData();
     formData.append('title', event.title);
@@ -551,15 +591,19 @@ function createEvent(event, modal) {
             } else
                 alert(_js["message"]);
 
-            if (modal != null) {
-                $(modal).modal('hide');
-            }
+            //Hide the form dialog
+            hideModal(modal);
         })
         .catch(error => {
             //console.error('Error:', error);
         });
 }
 
+/**
+ * Create update event fetch api request
+ * @param {event to update} event 
+ * @param {the form container} modal 
+ */
 function updateEvent(event, modal) {
     const formData = new FormData();
     formData.append('title', event.title);
@@ -581,15 +625,19 @@ function updateEvent(event, modal) {
             } else {
                 alert(_js["message"]);
             }
-            if (modal != null) {
-                $(modal).modal('hide');
-            }
+
+            //Hide the form dialog
+            hideModal(modal);
         })
         .catch(error => {
             console.error('Error:', error);
         });
 }
 
+/**
+ * Delete event fetch api request
+ * @param {event id to delete} event_id
+ */
 function deleteEvent(event_id) {
 
     return fetch('/event/' + event_id, {
@@ -597,20 +645,27 @@ function deleteEvent(event_id) {
         }).then(response => response.json())
         .then(result => {
             console.log(result);
-            var obj = JSON.stringify(result);
-            var _js = JSON.parse(obj);
-            if (_js["id"] && _js["id"] == event_id) {
+            //var obj = JSON.stringify(result);
+            //var _js = JSON.parse(obj);
+            if ( /*_js["id"] && _js["id"]*/ result == event_id) {
                 eventsList.deleteEvent(event_id);
                 getAllEvents();
             } else {
-                alert(_js["message"]);
+                var obj = JSON.stringify(result);
+                alert(obj["message"]);
             }
         })
         .catch(error => {
             console.error('Error:', error);
+            getAllEvents();
         });
 }
 
+
+/**
+ * Get single event fetch api request
+ * @param {event to find} event 
+ */
 function getEvent(event) {
     const formData = new FormData();
     formData.append('title', event.title);
@@ -643,38 +698,50 @@ function getEvent(event) {
 }
 
 
+/**
+ * Get all the events fetch api request
+ */
 function getAllEvents() {
 
     return fetch('/events/', {
             method: 'GET'
         }).then(response => response.json())
         .then(result => {
-            console.log(result);
-            var obj = JSON.stringify(result);
-            var obj2 = JSON.parse(obj);
-            //var _js = JSON.stringify(obj2);
-            //var _js2 = JSON.parse(_js);
-            console.log(obj2[0]);
-            var i;
-            if (obj2 != null)
-                obj2.forEach(addEventTolist);
+            if (result) {
+                console.log(result);
+                var obj = typeof result !== 'undefined' ? JSON.stringify(result) : "";
+                var obj2 = typeof obj !== 'undefined' ? JSON.parse(obj) : "";
+                console.log(obj2[0]);
 
-            //}
-            //_js.forEach(addEventTolist);
 
-            function addEventTolist(value, index, array) {
-                console.log("value: ");
-                console.log(value['id']);
-                console.log(value['title']);
-                var e = new EventClass();
-                e.fromJson(value);
-                console.log(e.getId());
-                eventsList.addEvent(e);
-                console.log(eventsList.getGeoJson());
-                var _geoJson = eventsList.getGeoJson();
-                setMapMarkers(_geoJson);
-                //console.log("list: ");
-                console.log(eventsList);
+
+                //}
+                //_js.forEach(addEventTolist);
+
+                function addEventTolist(value, index, array) {
+                    console.log("value: ");
+                    console.log(value['id']);
+                    console.log(value['title']);
+                    var e = new EventClass();
+                    e.fromJson(value);
+                    console.log(e.getId());
+                    eventsList.addEvent(e);
+                    console.log(eventsList.getGeoJson());
+                    var _geoJson = eventsList.getGeoJson();
+                    setMapMarkers(_geoJson);
+                    //console.log("list: ");
+                    console.log(eventsList);
+                }
+
+                if (typeof obj2 !== 'undefined' && obj2.length > 0)
+                    obj2.forEach(addEventTolist);
+                else {
+                    eventsList.clear();
+                    setMapMarkers(geojson);
+                    console.log("events cleared");
+                }
+            } else {
+                setMapMarkers(geojson);
             }
 
         })
@@ -684,5 +751,6 @@ function getAllEvents() {
         });
 }
 
+//Set the first get all operation and its interval
 getAllEvents();
 setInterval(getAllEvents, 8000);

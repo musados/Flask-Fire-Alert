@@ -7,7 +7,7 @@ main = Blueprint("main", __name__, static_folder="static", template_folder="temp
 
 
 @main.route("/")
-@main.route("/event/<event_id>")
+#@main.route("/event/<event_id>")
 #@main.route("/events")
 def map_home():
 	return render_template("map.html")
